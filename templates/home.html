@@ -1,0 +1,102 @@
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Face Identity Recognition Study</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .introduction {
+            margin-bottom: 40px;
+        }
+        .task-description {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        .key-points {
+            margin: 30px 0;
+        }
+        .key-points ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .key-points li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .key-points li:before {
+            content: "•";
+            color: #007bff;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        .btn {
+            display: block;
+            width: 200px;
+            margin: 40px auto 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Synthetic Dataset Evaluation Study</h1>
+
+        <div class="introduction">
+            <h2>Welcome to Our Research Study</h2>
+            <p>Thank you for participating in our synthetic dataset evaluation study. Your contribution will help us better understand how humans recognize the identities, which can inspire the future synthetic dataset generation studies to better solve the privacy issue.</p>
+        </div>
+
+        <div class="task-description">
+            <h3>What You'll Be Doing</h3>
+            <p>In this study, you will be shown 100 sets of face images and asked to answer if these images are from the same identity.</p>
+        </div>
+
+        <div class="key-points">
+            <h3>Before You Begin</h3>
+            <ul>
+                <li>We'll show you several example cases to help you understand the task</li>
+                <li>Take your time to observe the facial features in each image</li>
+                <li>There are no right or wrong answers - we value your honest perception</li>
+                <li>After you finish your survey, do not click the submit button and raise your hand to indicate the completion.</li>
+                <li>Your responses will be kept anonymous and used for research purposes only</li>
+            </ul>
+        </div>
+
+        <a href="{{ url_for('example', example_num=1) }}" class="btn">Start Tutorial</a>
+    </div>
+</body>
+</html>

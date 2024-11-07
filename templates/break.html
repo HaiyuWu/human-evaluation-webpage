@@ -1,0 +1,112 @@
+<!-- templates/break.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ready to Begin - Face Identity Study</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .completion-message {
+            text-align: center;
+            color: #28a745;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+        .guidelines {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 6px;
+            margin: 30px 0;
+        }
+        .guidelines h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .guidelines ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .guidelines li {
+            margin: 15px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        .guidelines li:before {
+            content: "✓";
+            color: #28a745;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        .reminder {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        .btn {
+            display: block;
+            width: 200px;
+            margin: 40px auto 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Take a break! The whole study will take 15 to 20 minutes.</h1>
+
+        <div class="completion-message">
+            <p>✨ Great job completing the tutorial! ✨</p>
+        </div>
+
+        <div class="guidelines">
+            <h3>Key Points to Remember</h3>
+            <ul>
+                <li>Look carefully at all facial features in each image set.</li>
+                <li>Consider both similarities and differences between faces.</li>
+                <li>Use "Not Sure" when you can't make a confident decision.</li>
+                <li>Take your time - accuracy is more important than speed.</li>
+            </ul>
+        </div>
+
+        <div class="reminder">
+            <h3>Important Notes:</h3>
+            <p>• The study will present multiple sets of faces.</p>
+            <p>• The images can be from the same or different identities, so do not worry if you have a lot of Definite answers.</p>
+            <p>• Please do not click submit button when you finish the study.</p>
+        </div>
+
+        <a href="{{ url_for('start_study') }}" class="btn">Begin Study</a>
+    </div>
+</body>
+</html>

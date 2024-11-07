@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Example {{ current_num }}</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .example-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+            box-sizing: border-box;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+        .image-container {
+            margin: 20px 0;
+            text-align: center;
+            height: calc(100vh - 400px); /* Reserve space for header, answer, and navigation */
+            min-height: 200px; /* Minimum height for very small screens */
+        }
+        .image-container img {
+            max-width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+        .answer {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="example-container">
+        <h1>Example {{ current_num }} of {{ total_examples }}</h1>
+
+        <div class="image-container">
+            <img src="{{ example.images[0] }}" alt="Example case {{ current_num }}">
+        </div>
+
+        <div class="answer">
+            <h3>Answer: {{ example.answer }}</h3>
+            <p>{{ example.explanation }}</p>
+        </div>
+
+        <div class="navigation">
+            {% if current_num > 1 %}
+            <a href="{{ url_for('example', example_num=current_num-1) }}" class="btn">Previous</a>
+            {% else %}
+            <button disabled class="btn">Previous</button>
+            {% endif %}
+
+            {% if current_num < total_examples %}
+            <a href="{{ url_for('example', example_num=current_num+1) }}" class="btn">Next</a>
+            {% else %}
+            <a href="{{ url_for('break_page') }}" class="btn">Continue to Study</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
