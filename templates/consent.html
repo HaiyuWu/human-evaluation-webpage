@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Consent Form</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .consent-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 100px);
+        }
+
+        .consent-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .consent-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .consent-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .consent-content::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .consent-actions {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #eee;
+            text-align: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .accept-button {
+            background-color: #ccc;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .accept-button.enabled {
+            background-color: #4CAF50;
+            cursor: pointer;
+        }
+
+        .accept-button.enabled:hover {
+            background-color: #45a049;
+        }
+
+        .decline-button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .decline-button:hover {
+            background-color: #da190b;
+        }
+
+        .footer-text {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Research Consent Form</h1>
+        <div class="consent-container">
+            <div id="consentContent" class="consent-content">
+                <div class="section">
+                    <p class="intro">Please read the following information carefully before deciding whether to participate in this experiment. This study is being conducted by Prof. Walter J. Scheirer at the University of Notre Dame (email: walter.scheirer@nd.edu; phone: 574-631-2436) under protocol 18-01-4341.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Why are you doing this research</div>
+                    <p>We want to understand the way the human brain helps us understand the world. More specifically, we want to know how the way we recognize pictures and sounds. This will help us gain a fundamental understanding of perception as it happens in the human brain. All measures on this website are for research purposes only and not for clinical diagnoses.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">What will I have to do?</div>
+                    <p>We will be asking you to pay attention to words, sounds or pictures on your computer. We will also ask you to make responses using your keyboard or your mouse. You will receive more specific instructions shortly.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">How long will this experiment take?</div>
+                    <p>This experiment will take about 30 minutes.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Are there any risks?</div>
+                    <p>We do not expect there to be any risks. For questions that might make you feel uncomfortable, you have the option to skip that question or decline to respond. You are also free to end the experiment at any time by closing your browser window.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">What do I get out of it?</div>
+                    <p>We will give you feedback on how you did when you finish the experiment. We will also explain what we hope to learn from this research. The final results from this experiment will be eventually be published. We will provide you with links to resources from the lab running this experiment, where future results derived from the data we are collecting will be posted.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Will I get paid?</div>
+                    <p>You will receive a small amount of compensation for your participation in this study, commensurate with the amount of work performed. For this task, you will receive $10.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Will you share my information with other people?</div>
+                    <p>All of your information is stored in a secure database. All of our databases are password-protected and secure. De-identified data from your participation may be submitted to a repository as part of a dataset that is publicly available and can be used to answer further research questions. This dataset will not include your name, email address, or any other information that can be used to uniquely identify you.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">What if I change my mind and don't want to do the experiment anymore?</div>
+                    <p>Your participation in this study is completely voluntary, and you may exit the experiment at any point. Your decision not to participate or to withdraw does not involve any penalty or loss of benefits to which you are otherwise entitled.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">What if I have questions or something to tell you?</div>
+                    <p>If you have any questions or comments about this experiment, please contact Walter Scheirer at walter.scheirer@nd.edu. Also, please feel free to browse the lab's website (https://www.wjscheirer.com/) to find out more about this research and the people involved.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">What if I have questions about my rights in this research?</div>
+                    <p>If you have questions about your rights in this research or for questions, concerns, suggestions, or complaints that are not being addressed by the researcher, or in the case of research-related harm, please contact the Committee on the Use of Human Subjects in Research at the University of Notre Dame. They can be reached at 574.631.1461, 940 Grace Hall Notre Dame, IN 46556 USA or compliance@nd.edu.</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">How do I agree to participate?</div>
+                    <p>By clicking "I Accept" below, you are confirming that:</p>
+                    <ul>
+                        <li>You agree to take part in this research.</li>
+                        <li>You feel like you understand what you are getting into.</li>
+                        <li>You understand that you are free to leave the experiment at any time.</li>
+                        <li>You affirm that you are at least 18 years of age.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="consent-actions">
+                <div class="button-group">
+                    <form action="{{ url_for('handle_consent') }}" method="post" style="display: inline;">
+                        <input type="hidden" name="consent" value="accept">
+                        <button type="submit" id="acceptButton" class="button accept-button" disabled>I Accept</button>
+                    </form>
+
+                    <form action="{{ url_for('handle_consent') }}" method="post" style="display: inline;">
+                        <input type="hidden" name="consent" value="decline">
+                        <button type="submit" class="button decline-button">I Decline</button>
+                    </form>
+                </div>
+                <p class="footer-text">
+                    This research has been reviewed by the Committee on the Use of Human Subjects in Research at the University of Notre Dame.
+                    They can be reached at 574.631.1461, 940 Grace Hall Notre Dame, IN 46556 USA or compliance@nd.edu.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const consentContent = document.getElementById('consentContent');
+            const acceptButton = document.getElementById('acceptButton');
+            let hasScrolled = false;
+
+            function checkScroll() {
+                // Check if user has scrolled to the bottom (with a small threshold for cross-browser compatibility)
+                const isAtBottom = consentContent.scrollHeight - consentContent.scrollTop <= consentContent.clientHeight + 1;
+
+                if (isAtBottom && !hasScrolled) {
+                    // Enable accept button
+                    acceptButton.classList.add('enabled');
+                    acceptButton.disabled = false;
+                    hasScrolled = true;
+                }
+            }
+
+            // Add scroll event listener
+            consentContent.addEventListener('scroll', checkScroll);
+
+            // Initial check in case content is too short
+            checkScroll();
+        });
+    </script>
+</body>
+</html>

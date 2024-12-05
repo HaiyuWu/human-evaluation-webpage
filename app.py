@@ -15,59 +15,106 @@ app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///results.db'
 db = SQLAlchemy(app)
 
-@app.route('/clear')
-def clear_session():
-    session.clear()
-    return "Session cleared!"
 
+# Modified database models
 class Result(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(50), nullable=False)
     group_id = db.Column(db.Integer, nullable=False)
     response = db.Column(db.String(20), nullable=False)
-    dataset = db.Column(db.String(50), nullable=False)
+    folder_paths = db.Column(db.Text, nullable=False)  # Store the selected folder paths
     images = db.Column(db.Text, nullable=False)
     completion_time = db.Column(db.Integer)
 
-class DatasetFrequency(db.Model):
+
+class FolderFrequency(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    dataset_name = db.Column(db.String(50), unique=True, nullable=False)
+    dataset_name = db.Column(db.String(50), nullable=False)
+    folder_path = db.Column(db.String(255), unique=True, nullable=False)
     frequency = db.Column(db.Integer, default=0)
 
 
 with app.app_context():
     db.create_all()
 
-    # Initialize dataset frequencies if they don't exist
-    default_datasets = [
+    # Initialize folder frequencies if they don't exist
+    static_folder = path.join(app.root_path, 'static')
+    datasets = [
         'dcface-gen', 'synface-gen', 'digiface-gen', 'sface-gen',
         'hsface10k-gen', 'idiff-face-gen', 'casia-webface-gen',
         'dcface-imp', 'synface-imp', 'digiface-imp', 'sface-imp',
-        'hsface10k-imp', 'idiff-face-imp', 'casia-webface-imp',
+        'hsface10k-imp', 'idiff-face-imp', 'casia-webface-imp'
     ]
 
-    for dataset in default_datasets:
-        if not DatasetFrequency.query.filter_by(dataset_name=dataset).first():
-            db.session.add(DatasetFrequency(dataset_name=dataset, frequency=0))
+    for dataset in datasets:
+        dataset_folders = glob(path.join(static_folder, dataset, "*"))
+        for folder in dataset_folders:
+            rel_path = path.relpath(folder, static_folder).replace("\\", "/")
+            if not FolderFrequency.query.filter_by(folder_path=rel_path).first():
+                db.session.add(FolderFrequency(
+                    dataset_name=dataset,
+                    folder_path=rel_path,
+                    frequency=0
+                ))
     db.session.commit()
 
 
-def get_dataset_frequencies():
-    frequencies = DatasetFrequency.query.all()
-    return {freq.dataset_name: freq.frequency for freq in frequencies}
+def increment_folder_frequencies(folder_paths):
+    """Increment the frequency count for selected folders"""
+    for folder_path in folder_paths:
+        folder_freq = FolderFrequency.query.filter_by(folder_path=folder_path).first()
+        if folder_freq:
+            folder_freq.frequency += 1
+    db.session.commit()
 
 
-def increment_dataset_frequency(dataset_name):
-    dataset_freq = DatasetFrequency.query.filter_by(dataset_name=dataset_name).first()
-    if dataset_freq:
-        dataset_freq.frequency += 1
-        db.session.commit()
+def print_folder_frequencies():
+    """Print current folder frequencies for monitoring"""
+    frequencies = FolderFrequency.query.all()
+    print("\nFolder Frequencies:")
+    print("-" * 80)
+    print(f"{'Dataset':<20} {'Folder Path':<40} {'Frequency':>10}")
+    print("-" * 80)
+    for freq in frequencies:
+        print(f"{freq.dataset_name:<20} {freq.folder_path:<40} {freq.frequency:>10}")
+    print("-" * 80)
+
+
+def select_folders_for_session():
+    """Select 15 folders from each pair of gen/imp datasets, prioritizing least used folders"""
+    static_folder = path.join(app.root_path, 'static')
+    selected_folders = []
+
+    # List of base dataset names (without -gen/-imp suffix)
+    base_datasets = [
+        'dcface', 'synface', 'digiface', 'sface',
+        'hsface10k', 'idiff-face', 'casia-webface'
+    ]
+
+    for base_dataset in base_datasets:
+        # Get folders from both gen and imp versions
+        gen_folders = FolderFrequency.query.filter_by(dataset_name=f"{base_dataset}-gen") \
+            .order_by(FolderFrequency.frequency) \
+            .all()
+        imp_folders = FolderFrequency.query.filter_by(dataset_name=f"{base_dataset}-imp") \
+            .order_by(FolderFrequency.frequency) \
+            .all()
+
+        # Combine and sort by frequency
+        all_folders = sorted(gen_folders + imp_folders, key=lambda x: x.frequency)
+
+        # Select the 15 folders with lowest frequency
+        selected = all_folders[:15]
+        selected_folders.extend([folder.folder_path for folder in selected])
+
+    # Shuffle the selected folders
+    random.shuffle(selected_folders)
+    return selected_folders
 
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        # doesn't even have to be reachable
         s.connect(('10.255.255.255', 1))
         IP = s.getsockname()[0]
     except Exception:
@@ -77,45 +124,60 @@ def get_ip():
     return IP
 
 
-def print_dataset_frequencies():
-    frequencies = DatasetFrequency.query.all()
-    print("\nDataset Frequencies:")
-    print("-" * 40)
-    print(f"{'Dataset Name':<30} {'Frequency':>8}")
-    print("-" * 40)
-    for freq in frequencies:
-        print(f"{freq.dataset_name:<30} {freq.frequency:>8}")
-    print("-" * 40)
+def preload_image_sets():
+    """Load images from selected folders for the session"""
+    if 'selected_folders' not in session:
+        session['selected_folders'] = select_folders_for_session()
+        increment_folder_frequencies(session['selected_folders'])
+        print_folder_frequencies()  # Print frequencies for monitoring
 
-
-def select_random_dataset():
-    print_dataset_frequencies()
-    # Query datasets with frequency less than 5
-    eligible_datasets = DatasetFrequency.query.filter(DatasetFrequency.frequency < 5).all()
-    if not eligible_datasets:
-        return "dcface"  # Default dataset if all have frequency >= 5
-
-    # Randomly select one of the eligible datasets
-    selected_dataset = random.choice(eligible_datasets)
-    return selected_dataset.dataset_name
-
-
-def preload_image_sets(dataset="dcface"):
     static_folder = path.join(app.root_path, 'static')
-    all_folders = glob(static_folder + f"/{dataset}/*")
-
     image_sets = []
-    for folder in all_folders:
-        image_set = [path.relpath(im, static_folder).replace("\\", "/") for im in glob(folder + "/*")[:8]]
+
+    for folder_path in session['selected_folders']:
+        full_folder_path = path.join(static_folder, folder_path)
+        image_set = [path.relpath(im, static_folder).replace("\\", "/")
+                     for im in glob(full_folder_path + "/*")[:8]]
         image_sets.append(image_set)
+
     return image_sets
+
+
+@app.route('/clear')
+def clear_session():
+    session.clear()
+    return "Session cleared!"
 
 
 @app.route('/')
 def home():
+    if not session.get('consented'):
+        return redirect(url_for('consent'))
     if 'example_completed' in session:
         return redirect(url_for('index'))
     return render_template('home.html')
+
+
+@app.route('/consent')
+def consent():
+    if session.get('consented'):
+        return redirect(url_for('home'))
+    return render_template('consent.html')
+
+
+@app.route('/handle_consent', methods=['POST'])
+def handle_consent():
+    consent = request.form.get('consent')
+    if consent == 'accept':
+        session['consented'] = True
+        return redirect(url_for('home'))
+    else:
+        return redirect(url_for('thank_you'))
+
+
+@app.route('/thank_you')
+def thank_you():
+    return render_template('thank_you.html')
 
 
 @app.route('/examples/<path:filename>')
@@ -127,7 +189,6 @@ def examples(filename):
 def example(example_num):
     if example_num < 1 or example_num > 4:
         return redirect(url_for('home'))
-    # Example data structure
     examples = {
         1: {
             'images': [url_for('examples', filename='not_sure_case.png')],
@@ -150,7 +211,6 @@ def example(example_num):
             'explanation': 'There are males and females among these images, so Definitely No.'
         }
     }
-
     return render_template('example.html',
                            example=examples[example_num],
                            current_num=example_num,
@@ -169,30 +229,21 @@ def start_study():
         session['user_id'] = str(random.randint(10000, 99999))
         session['current_group'] = 0
         session['responses'] = {}
-        session['dataset'] = select_random_dataset()
-
-        # Increment the dataset frequency when submitting results
-        increment_dataset_frequency(session['dataset'])
-
-        while 'imp' in session['dataset']:
-            session['dataset'] = select_random_dataset()
-
     return redirect(url_for('index'))
 
 
-# Modified index route to check for example completion
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     if 'example_completed' not in session:
         return redirect(url_for('home'))
 
     global IMAGE_SETS
-    IMAGE_SETS = preload_image_sets(session['dataset'])
+    IMAGE_SETS = preload_image_sets()
 
     if request.method == 'POST':
         action = request.form.get('action')
         response = request.form.get('response')
-        elapsed_time = request.form.get('elapsed_time')  # Get elapsed time from form
+        elapsed_time = request.form.get('elapsed_time')
 
         if response:
             session['responses'][str(session['current_group'])] = response
@@ -201,28 +252,27 @@ def index():
         if action == 'prev':
             session['current_group'] = max(session['current_group'] - 1, 0)
         elif action == 'next':
-            session['current_group'] = min(session['current_group'] + 1, 99)
+            session['current_group'] = min(session['current_group'] + 1, 104)
         elif action == 'submit':
-            # Store elapsed time in session before redirecting
             session['elapsed_time'] = elapsed_time
             return redirect(url_for('submit'))
 
     images = IMAGE_SETS[session['current_group']]
     previous_response = session['responses'].get(str(session['current_group']), '')
-    is_last_page = session['current_group'] == 1
+    is_last_page = session['current_group'] == 104
 
     return render_template('index.html',
-                         images=images,
-                         group=session['current_group'] + 1,
-                         total_groups=100,
-                         previous_response=previous_response,
-                         is_last_page=is_last_page)
+                           images=images,
+                           group=session['current_group'] + 1,
+                           total_groups=105,
+                           previous_response=previous_response,
+                           is_last_page=is_last_page)
+
 
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
     if request.method == 'POST':
         responses = session.get('responses', {})
-        dataset = session.get('dataset', None)
         completion_time = session.get('elapsed_time')
         try:
             for group_id, response in responses.items():
@@ -231,7 +281,7 @@ def submit():
                     user_id=session['user_id'],
                     group_id=int(group_id),
                     response=response,
-                    dataset=dataset,
+                    folder_paths=session['selected_folders'][int(group_id)],
                     images=','.join(images),
                     completion_time=int(completion_time) if completion_time else None
                 )
@@ -243,11 +293,10 @@ def submit():
             db.session.rollback()
             return f"An error occurred: {str(e)}"
 
-    # Pass the elapsed time to the submit template
     elapsed_time = session.get('elapsed_time')
     return render_template('submit.html', elapsed_time=elapsed_time)
 
 
 if __name__ == '__main__':
     ip = get_ip()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=True, ssl_context=None)
